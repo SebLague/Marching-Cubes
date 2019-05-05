@@ -1,0 +1,62 @@
+﻿#pragma kernel Density
+#include "/Includes/Density.compute"
+#include "/Includes/Noise.compute"
+
+// Noise settings
+StructuredBuffer<float3> offsets;
+int octaves;
+float lacunarity;
+float persistence;
+float noiseScale;
+float noiseWeight;
+float floorOffset;
+float weightMultiplier;
+bool closeEdges;
+float hardFloor;
+float hardFloorWeight;
+
+float4 params;
+
+[numthreads(numThreads,numThreads,numThreads)]
+void Density (int3 id : SV_DispatchThreadID)
+{
+    if (id.x >= numPointsPerAxis || id.y >= numPointsPerAxis || id.z >= numPointsPerAxis) {
+        return;
+    }
+
+    float3 pos = centre + id * spacing - boundsSize/2;
+    float offsetNoise = 0;
+
+    float noise = 0;
+
+    float frequency = noiseScale/100;
+    float amplitude = 1;
+    float weight = 1;
+    for (int j =0; j < octaves; j ++) {
+        float n = snoise((pos+offsetNoise) * frequency + offsets[j] + offset);
+        float v = 1-abs(n);
+        v = v*v;
+        v *= weight;
+        weight = max(min(v*weightMultiplier,1),0);
+        noise += v * amplitude;
+        amplitude *= persistence;
+        frequency *= lacunarity;
+    }
+    
+    float finalVal = -(pos.y + floorOffset) + noise * noiseWeight + (pos.y%params.x) * params.y;
+
+    if (pos.y < hardFloor) {
+        finalVal += hardFloorWeight;
+    }
+
+    if (closeEdges) {
+        float3 edgeOffset = abs(pos*2)-worldSize + spacing/2;
+        float edgeWeight = saturate(sign(max(max(edgeOffset.x,edgeOffset.y),edgeOffset.z)));
+        finalVal = finalVal * (1-edgeWeight) - 100 * edgeWeight;
+        
+    }
+
+    int index = indexFromCoord(id.x,id.y,id.z);
+    points[index] = float4(pos, finalVal);
+    
+}
