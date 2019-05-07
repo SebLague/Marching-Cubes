@@ -255,7 +255,7 @@ public class MeshGenerator : MonoBehaviour {
             }
             triangleBuffer = new ComputeBuffer (maxTriangleCount, sizeof (float) * 3 * 3, ComputeBufferType.Append);
             pointsBuffer = new ComputeBuffer (numPoints, sizeof (float) * 4);
-            triCountBuffer = new ComputeBuffer (1, sizeof (int));
+            triCountBuffer = new ComputeBuffer (1, sizeof (int), ComputeBufferType.Raw);
 
         }
     }
