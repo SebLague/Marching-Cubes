@@ -48,6 +48,8 @@ public class MeshGenerator : MonoBehaviour {
     ComputeBuffer pointsBuffer;
     ComputeBuffer triCountBuffer;
 
+    bool settingsUpdated;
+
     void Awake () {
         if (Application.isPlaying && !fixedMapSize) {
             InitVariableChunkStructures ();
@@ -63,6 +65,11 @@ public class MeshGenerator : MonoBehaviour {
         // Update endless terrain
         if ((Application.isPlaying && !fixedMapSize)) {
             Run ();
+        }
+
+        if (settingsUpdated) {
+            RequestMeshUpdate ();
+            settingsUpdated = false;
         }
     }
 
@@ -330,8 +337,8 @@ public class MeshGenerator : MonoBehaviour {
         return newChunk;
     }
 
-    void OnValidate () {
-        RequestMeshUpdate ();
+    void OnValidate() {
+        settingsUpdated = true;
     }
 
     struct Triangle {
