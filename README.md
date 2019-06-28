@@ -20,6 +20,8 @@ To run this project you'll need to open it in the Unity game engine: https://uni
 
 ☐ Add bash scripts for testing. (Unity test? vtk? save mesh to file?)
 
+☐ Add continuous integration testing.
+
 ☐ Add lower quality rendering at further distances.
 
 ☐ Double check that lower quality meshes connect to nearby ones. If not, fix.
