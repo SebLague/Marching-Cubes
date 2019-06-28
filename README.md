@@ -16,6 +16,8 @@ To run this project you'll need to open it in the Unity game engine: https://uni
 
 ☐ Transfer collision mesh generation from other pcg system to this one
 
+☐ Transfer mesh smoothing from second other pcg system to this one. 
+
 ☐ Check if unity's job system is used. Add it if it's not.
 
 ☐ Add bash scripts for testing. (Unity test? vtk? save mesh to file?)
