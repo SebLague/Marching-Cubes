@@ -222,8 +222,13 @@ public class MeshGenerator : MonoBehaviour {
         }
         mesh.vertices = vertices;
         mesh.triangles = meshTriangles;
+        var scale = chunk.GetComponent<Transform>().localScale;
+        mesh.SetUVs(0, UvCalculator.CalculateUVs(vertices, scale.magnitude));
+        NormalSolver.RecalculateNormals(mesh, 60);
 
-        mesh.RecalculateNormals ();
+        chunk.UpdateColliders();
+
+        
     }
 
     public void UpdateAllChunks () {
@@ -284,7 +289,18 @@ public class MeshGenerator : MonoBehaviour {
             if (GameObject.Find (chunkHolderName)) {
                 chunkHolder = GameObject.Find (chunkHolderName);
             } else {
-                chunkHolder = new GameObject (chunkHolderName);
+                chunkHolder = new GameObject(chunkHolderName);
+
+                if (generateColliders)
+                {
+                    //add rigidbody so collisions are enforced
+                    var rigidBody = chunkHolder.AddComponent<Rigidbody>();
+                    rigidBody.useGravity = false;
+                    rigidBody.isKinematic = true;
+                    rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+                    rigidBody.detectCollisions = true;
+                }
+                
             }
         }
     }
@@ -319,6 +335,7 @@ public class MeshGenerator : MonoBehaviour {
                     }
 
                     chunks[chunks.Count - 1].SetUp (mat, generateColliders);
+
                 }
             }
         }

@@ -22,6 +22,18 @@ public class Chunk : MonoBehaviour {
         }
     }
 
+    public void UpdateColliders()
+    {
+        if (generateCollider)
+        {
+            meshCollider.sharedMesh = null;
+            meshCollider.sharedMesh = mesh;
+            // force update
+            meshCollider.enabled = false;
+            meshCollider.enabled = true;
+        }
+    }
+
     // Add components/get references in case lost (references can be lost when working in the editor)
     public void SetUp (Material mat, bool generateCollider) {
         this.generateCollider = generateCollider;
@@ -30,8 +42,9 @@ public class Chunk : MonoBehaviour {
         meshRenderer = GetComponent<MeshRenderer> ();
         meshCollider = GetComponent<MeshCollider> ();
 
-        if (meshFilter == null) {
-            meshFilter = gameObject.AddComponent<MeshFilter> ();
+        if (meshFilter == null)
+        {
+            meshFilter = gameObject.AddComponent<MeshFilter>();
         }
 
         if (meshRenderer == null) {
@@ -60,6 +73,8 @@ public class Chunk : MonoBehaviour {
             meshCollider.enabled = false;
             meshCollider.enabled = true;
         }
+
+        
 
         meshRenderer.material = mat;
     }

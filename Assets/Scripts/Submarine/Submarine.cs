@@ -48,8 +48,9 @@ public class Submarine : MonoBehaviour {
 
         float targetYawVelocity = Input.GetAxisRaw ("Horizontal") * maxTurnSpeed;
         yawVelocity = Mathf.Lerp (yawVelocity, targetYawVelocity, Time.deltaTime * smoothTurnSpeed);
-        transform.localEulerAngles += (Vector3.up * yawVelocity + Vector3.left * pitchVelocity) * Time.deltaTime * speedPercent;
-        transform.Translate (transform.forward * currentSpeed * Time.deltaTime, Space.World);
+        var rbody = GetComponent<Rigidbody>();
+        rbody.rotation = Quaternion.Euler(rbody.rotation.eulerAngles+(Vector3.up * yawVelocity + Vector3.left * pitchVelocity) * Time.deltaTime * speedPercent);
+        rbody.velocity = (transform.forward * currentSpeed);
 
         rudderYaw.localEulerAngles = Vector3.up * yawVelocity / maxTurnSpeed * rudderAngle;
         rudderPitch.localEulerAngles = Vector3.left * pitchVelocity / maxPitchSpeed * rudderAngle;
