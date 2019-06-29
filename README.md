@@ -6,6 +6,11 @@ To run this project you'll need to open it in the Unity game engine: https://uni
 
 ![Underwater World](https://thumbs.gfycat.com/OldfashionedGlamorousGibbon-size_restricted.gif)
 
+Learning resources:
+http://paulbourke.net/geometry/polygonise/
+https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch01.html
+https://people.eecs.berkeley.edu/~jrs/meshpapers/LorensenCline.pdf
+
 # Change Log
 
 ## Version 0.2.0
@@ -17,8 +22,3 @@ To run this project you'll need to open it in the Unity game engine: https://uni
 
 ## Version 0.1.0
 * Initial
-
-Learning resources:
-http://paulbourke.net/geometry/polygonise/
-https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch01.html
-https://people.eecs.berkeley.edu/~jrs/meshpapers/LorensenCline.pdf
