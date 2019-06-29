@@ -4,31 +4,19 @@ Coding Adventure
 See my video on this project here: https://www.youtube.com/watch?v=M3iI2l0ltbE
 To run this project you'll need to open it in the Unity game engine: https://unity3d.com/
 
-![Underwater World](https://i.boring.host/10RZs7xV.png)
+![Underwater World](https://thumbs.gfycat.com/OldfashionedGlamorousGibbon-size_restricted.gif)
 
-# Todo
+# Change Log
 
-☑ Add this todo list to immedietely differentiate from all the other forks.
+## Version 0.2.0
+* Add this todo list to immedietely differentiate from all the other forks.
+* Update unity version if needed.
+* Transfer UV generator from old pcg system to this one
+* Fix collision meshes not updating, or being usable by unity's rigidbody.
+* Transfer mesh smoothing from second other pcg system to this one. 
 
-☐ Update unity version if needed.
-
-☐ Transfer UV generator from old pcg system to this one
-
-☐ Transfer collision mesh generation from other pcg system to this one
-
-☐ Transfer mesh smoothing from second other pcg system to this one. 
-
-☐ Check if unity's job system is used. Add it if it's not.
-
-☐ Add bash scripts for testing. (Unity test? vtk? save mesh to file?)
-
-☐ Add continuous integration testing.
-
-☐ Add lower quality rendering at further distances.
-
-☐ Double check that lower quality meshes connect to nearby ones. If not, fix.
-
-☐ Update/create version and add to changelog
+## Version 0.1.0
+* Initial
 
 Learning resources:
 http://paulbourke.net/geometry/polygonise/
