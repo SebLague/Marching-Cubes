@@ -33,6 +33,9 @@ public class MeshGenerator : MonoBehaviour {
     [Range (2, 100)]
     public int numPointsPerAxis = 30;
 
+    [Header("Mesh Settings")]
+    public float normalDegrees = 180;
+
     [Header ("Gizmos")]
     public bool showBoundsGizmo = true;
     public Color boundsGizmoCol = Color.white;
@@ -224,7 +227,7 @@ public class MeshGenerator : MonoBehaviour {
         mesh.triangles = meshTriangles;
         var scale = chunk.GetComponent<Transform>().localScale;
         mesh.SetUVs(0, UvCalculator.CalculateUVs(vertices, scale.magnitude));
-        NormalSolver.RecalculateNormals(mesh, 60);
+        NormalSolver.RecalculateNormals(mesh, normalDegrees);
 
         chunk.UpdateColliders();
 
