@@ -6,7 +6,9 @@ public class DebugCamera : MonoBehaviour
 {
     public float speed = 50;
     Vector3 momentum = Vector3.zero;
-    float turbo = 1f;
+    float turbo = 10f;
+    public bool noBrakes = false;
+    public float doubleSpeedSeconds = 60f;
 
     public float angularSpeed = 45f;
 
@@ -26,7 +28,16 @@ public class DebugCamera : MonoBehaviour
     {
         if (controlsActive)
         {
-            float v = Input.GetAxis("Vertical");
+            float v;
+            if (noBrakes)
+            {
+                v = 1.0f;
+                speed = speed * Mathf.Pow(2,Time.deltaTime / doubleSpeedSeconds);
+            }
+            else
+            {
+                v = Input.GetAxis("Vertical");
+            }
             float h = Input.GetAxis("Horizontal");
 
             float d = 0;

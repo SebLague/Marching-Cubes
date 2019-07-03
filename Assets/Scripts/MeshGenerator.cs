@@ -41,7 +41,7 @@ public class MeshGenerator : MonoBehaviour {
     public Color boundsGizmoCol = Color.white;
 
     GameObject chunkHolder;
-    const string chunkHolderName = "Chunks Holder";
+    public string chunkHolderName = "Chunks Holder";
     List<Chunk> chunks;
     Dictionary<Vector3Int, Chunk> existingChunks;
     Queue<Chunk> recycleableChunks;
@@ -52,6 +52,7 @@ public class MeshGenerator : MonoBehaviour {
     ComputeBuffer triCountBuffer;
 
     bool settingsUpdated;
+    public float fpsBreakout = 60f;
 
     void Awake () {
         if (Application.isPlaying && !fixedMapSize) {
@@ -108,11 +109,15 @@ public class MeshGenerator : MonoBehaviour {
         existingChunks = new Dictionary<Vector3Int, Chunk> ();
     }
 
+    
+
     void InitVisibleChunks () {
         if (chunks==null) {
             return;
         }
         CreateChunkHolder ();
+
+        
 
         Vector3 p = viewer.position;
         Vector3 ps = p / boundsSize;
@@ -135,44 +140,54 @@ public class MeshGenerator : MonoBehaviour {
             }
         }
 
-        for (int x = -maxChunksInView; x <= maxChunksInView; x++) {
-            for (int y = -maxChunksInView; y <= maxChunksInView; y++) {
-                for (int z = -maxChunksInView; z <= maxChunksInView; z++) {
-                    Vector3Int coord = new Vector3Int (x, y, z) + viewerCoord;
+        float t0 = Time.realtimeSinceStartup;
 
-                    if (existingChunks.ContainsKey (coord)) {
-                        continue;
+        foreach (Vector3Int spi in SpiralIterators.Cube(new Vector3Int(maxChunksInView, maxChunksInView, maxChunksInView)))
+        {
+            if (Time.realtimeSinceStartup - t0 > (1.0 / fpsBreakout))
+            {
+                return;
+            }
+
+            Vector3Int coord = spi + viewerCoord;
+
+            if (existingChunks.ContainsKey(coord))
+            {
+                continue;
+            }
+
+            Vector3 centre = CentreFromCoord(coord);
+            Vector3 viewerOffset = p - centre;
+            Vector3 o = new Vector3(Mathf.Abs(viewerOffset.x), Mathf.Abs(viewerOffset.y), Mathf.Abs(viewerOffset.z)) - Vector3.one * boundsSize / 2;
+            float sqrDst = new Vector3(Mathf.Max(o.x, 0), Mathf.Max(o.y, 0), Mathf.Max(o.z, 0)).sqrMagnitude;
+
+            // Chunk is within view distance and should be created (if it doesn't already exist)
+            if (sqrDst <= sqrViewDistance)
+            {
+
+                Bounds bounds = new Bounds(CentreFromCoord(coord), Vector3.one * boundsSize);
+                if (IsVisibleFrom(bounds, Camera.main))
+                {
+                    if (recycleableChunks.Count > 0)
+                    {
+                        Chunk chunk = recycleableChunks.Dequeue();
+                        chunk.coord = coord;
+                        existingChunks.Add(coord, chunk);
+                        chunks.Add(chunk);
+                        UpdateChunkMesh(chunk);
                     }
-
-                    Vector3 centre = CentreFromCoord (coord);
-                    Vector3 viewerOffset = p - centre;
-                    Vector3 o = new Vector3 (Mathf.Abs (viewerOffset.x), Mathf.Abs (viewerOffset.y), Mathf.Abs (viewerOffset.z)) - Vector3.one * boundsSize / 2;
-                    float sqrDst = new Vector3 (Mathf.Max (o.x, 0), Mathf.Max (o.y, 0), Mathf.Max (o.z, 0)).sqrMagnitude;
-
-                    // Chunk is within view distance and should be created (if it doesn't already exist)
-                    if (sqrDst <= sqrViewDistance) {
-
-                        Bounds bounds = new Bounds (CentreFromCoord (coord), Vector3.one * boundsSize);
-                        if (IsVisibleFrom (bounds, Camera.main)) {
-                            if (recycleableChunks.Count > 0) {
-                                Chunk chunk = recycleableChunks.Dequeue ();
-                                chunk.coord = coord;
-                                existingChunks.Add (coord, chunk);
-                                chunks.Add (chunk);
-                                UpdateChunkMesh (chunk);
-                            } else {
-                                Chunk chunk = CreateChunk (coord);
-                                chunk.coord = coord;
-                                chunk.SetUp (mat, generateColliders);
-                                existingChunks.Add (coord, chunk);
-                                chunks.Add (chunk);
-                                UpdateChunkMesh (chunk);
-                            }
-                        }
+                    else
+                    {
+                        Chunk chunk = CreateChunk(coord);
+                        chunk.coord = coord;
+                        chunk.SetUp(mat, generateColliders);
+                        existingChunks.Add(coord, chunk);
+                        chunks.Add(chunk);
+                        UpdateChunkMesh(chunk);
                     }
-
                 }
             }
+            
         }
     }
 
@@ -350,7 +365,7 @@ public class MeshGenerator : MonoBehaviour {
     }
 
     Chunk CreateChunk (Vector3Int coord) {
-        GameObject chunk = new GameObject ($"Chunk ({coord.x}, {coord.y}, {coord.z})");
+        GameObject chunk = new GameObject ($"{chunkHolderName} Chunk ({coord.x}, {coord.y}, {coord.z})");
         chunk.transform.parent = chunkHolder.transform;
         Chunk newChunk = chunk.AddComponent<Chunk> ();
         newChunk.coord = coord;
